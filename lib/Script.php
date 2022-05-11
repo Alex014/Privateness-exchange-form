@@ -1,0 +1,162 @@
+<?php
+namespace lib;
+
+require '../lib/DB.php';
+require '../lib/Ness.php';
+require '../lib/Emercoin.php';
+require '../lib/Parser.php';
+
+use lib\DB;
+use lib\Ness;
+use lib\Emercoin;
+use lib\Parser;
+
+class Script {
+    private $v1;
+    private $v2;
+    private $db;
+    private $config;
+
+    public function __construct() 
+    {
+        $this->config = require '../config/config.php';
+
+        $ness1 = $this->config['ness']['v2'];
+        $ness2 = $this->config['ness']['v2'];
+        $this->db = new DB($this->config['db']['host'], $this->config['db']['database'], $this->config['db']['user'], $this->config['db']['password']);
+        
+        // var_dump($tokens);
+        // $tokens = $db->find('zxc');
+        // var_dump($tokens);
+
+        $this->v1 = new Ness($ness1['host'], (int) $ness1['port'], $ness1['wallet_id'], $ness1['password']);
+        $this->v2 = new Ness($ness2['host'], (int) $ness2['port'], $ness2['wallet_id'], $ness2['password']);
+        // var_dump($ness->getAddress('subhf1sXSH4zJc4EN9PTHLB4cPmcqYTJga'));
+
+        // var_dump($ness->createAddr());
+    }
+
+    public function parseTokens()
+    {
+        $this->synchronize();
+        echo 'synchronize - ok';
+        $this->process();
+        echo 'process - ok';
+    }
+
+    private function selectTokensNVS()
+    {
+        Emercoin::$address = $this->config['emercoin']['host'];
+        Emercoin::$port = $this->config['emercoin']['port'];
+        Emercoin::$username = $this->config['emercoin']['user'];
+        Emercoin::$password = $this->config['emercoin']['password'];
+        $tokens = Emercoin::name_filter("worm:token:ness_exchange_v1_v2:.+");
+
+        $tokens = array_map(function ($token) {
+            $token['crc32'] = crc32($token['value']);
+            $name = explode(':', $token['name']);
+            $token['address'] = $name[count($name) - 1];
+            return $token;
+        },
+        $tokens);
+
+        return $tokens;
+    }
+
+    private function selectTokensDB()
+    {
+        $result = [];
+        $tokens = $this->db->findAll();
+        foreach ($tokens as $token) {
+            $result[$token['address']] = $token;
+        }
+
+        return $result;
+    }
+
+    private function synchronize()
+    {
+        $tokens_nvs = $this->selectTokensNVS();
+
+        foreach ($tokens_nvs as $token) {
+
+            $element = $this->db->find($token['address']);
+
+            if (!empty($element)) {
+                if ('PAYED' !== $element['status'] && 'ACTIVATED' !== $element['status']) {
+                    if ($element['crc32'] != $token['crc32']) {
+                        var_dump($element['crc32'], $token['crc32']);
+                        $this->db->update($token['address'], $this->parseToken($token));
+                    }
+                }
+            } else {
+                $this->db->add($this->parseToken($token));
+            }
+        }
+    }
+
+    private function process()
+    {
+        $tokens_db = $this->selectTokensDB();
+        foreach ($tokens_db as $token) {
+            $this->processToken($token);
+        }
+    }
+
+    private function parseToken(array $token)
+    {
+        $result = Parser::parseToken($token['value']);
+        $result['address'] = $token['address'];
+
+        return $result;
+    }
+
+    private function processToken(array $token)
+    {
+        if ('CHECKED' === $token['status']) {
+            if ($this->checkAddress($token['address']) && $this->checkUserPaymentAddress($token['pay_address'])) {
+                $this->activateToken($token);
+            }
+        } elseif ('ACTIVATED' === $token['status']) {
+            if ( $this->checkUserPaymentAddress($token['gen_address']) ) {
+                $this->payToken($token);
+            }
+        }
+    }
+
+    private function checkAddress(string $address)
+    {
+        return $this->v1->checkAddress($address);
+    }
+
+    private function checkUserPaymentAddress(array $token)
+    {
+        return $this->v2->checkLastRecieved($token['address'], $token['gen_address']);
+    }
+
+    private function activateToken(array $token)
+    {
+        if (!$this->checkAddress($token['address'])) {
+            $this->db->updateError($token['address'], "Address $token[address] does not exist");
+        }
+
+        if (!$this->checkAddress($token['pay_address'])) {
+            $this->db->updateError($token['address'], "Payment address $token[pay_address] does not exist");
+        }
+
+        $gen_address = $this->v2->createAddr();
+
+        $this->db->activate($token['address'], $gen_address);
+    }
+
+    private function payToken(array $token)
+    {
+        if ($this->checkUserPaymentAddress($token)) {
+            $address = $token['address'];
+            $addr_data = $this->v1->getAddress($address);
+            $hours = $addr_data['addresses'][$address]['confirmed']['hours'];
+            $coins = round ($hours  / $this->config['exchange']['ratio']);
+            $this->v2->pay($this->config['v2']['payment_addr'], $token['pay_address'], $coins, 1);
+        }
+    }
+}
