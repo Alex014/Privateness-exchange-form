@@ -39,9 +39,9 @@ class Script {
     public function parseTokens()
     {
         $this->synchronize();
-        echo 'synchronize - ok';
+        echo "synchronize - ok\n";
         $this->process();
-        echo 'process - ok';
+        echo "process - ok\n";
     }
 
     private function selectTokensNVS()
@@ -79,13 +79,11 @@ class Script {
         $tokens_nvs = $this->selectTokensNVS();
 
         foreach ($tokens_nvs as $token) {
-
             $element = $this->db->find($token['address']);
 
             if (!empty($element)) {
                 if ('PAYED' !== $element['status'] && 'ACTIVATED' !== $element['status']) {
                     if ($element['crc32'] != $token['crc32']) {
-                        var_dump($element['crc32'], $token['crc32']);
                         $this->db->update($token['address'], $this->parseToken($token));
                     }
                 }
@@ -114,13 +112,9 @@ class Script {
     private function processToken(array $token)
     {
         if ('CHECKED' === $token['status']) {
-            if ($this->checkAddress($token['address']) && $this->checkUserPaymentAddress($token['pay_address'])) {
-                $this->activateToken($token);
-            }
+            $this->activateToken($token);
         } elseif ('ACTIVATED' === $token['status']) {
-            if ( $this->checkUserPaymentAddress($token['gen_address']) ) {
-                $this->payToken($token);
-            }
+            $this->payToken($token);
         }
     }
 
@@ -144,7 +138,9 @@ class Script {
             $this->db->updateError($token['address'], "Payment address $token[pay_address] does not exist");
         }
 
+        echo 'Begin createAddr()';
         $gen_address = $this->v2->createAddr();
+        echo 'End createAddr()';
 
         $this->db->activate($token['address'], $gen_address);
     }
@@ -155,8 +151,12 @@ class Script {
             $address = $token['address'];
             $addr_data = $this->v1->getAddress($address);
             $hours = $addr_data['addresses'][$address]['confirmed']['hours'];
-            $coins = round ($hours  / $this->config['exchange']['ratio']);
-            $this->v2->pay($this->config['v2']['payment_addr'], $token['pay_address'], $coins, 1);
+            $coins = $hours  / $this->config['exchange']['ratio'];
+            var_dump($this->config['ness']['v2']['payment_address'], $token['pay_address'], $coins);
+
+            $this->v2->pay($this->config['ness']['v2']['payment_address'], $token['pay_address'], $coins, 1);
+
+            $this->db->pay($address);
         }
     }
 }

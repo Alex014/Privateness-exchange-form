@@ -54,12 +54,12 @@ class DB {
     public function activate(string $address, string $gen_addr = '')
     {
         $st = $this->connection->prepare(
-            "UPDATE tokens SET status = 'ACTIVATED', gen_addr = ? WHERE address = ?");
+            "UPDATE tokens SET status = 'ACTIVATED', gen_address = ? WHERE address = ?");
 
         return $st->execute([$gen_addr, $address]);
     }
 
-    public function pay(string $address, string $gen_addr = '')
+    public function pay(string $address)
     {
         $st = $this->connection->prepare(
             "UPDATE tokens SET status = 'PAYED' WHERE address = ?");

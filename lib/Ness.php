@@ -63,7 +63,9 @@ class Ness {
     // var_dump($output);
 
     if (empty($output)) {
-      throw new \Exception("Privateness daemon is not running");
+      return [
+        $addr => ['addresses' => [] ]
+      ];
     }
 
     return json_decode($output, true);

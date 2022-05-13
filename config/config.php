@@ -4,16 +4,16 @@ return [
     'ness' => [
         'v1' => [
             'host' => 'localhost',
-            'port' => '6421',
+            'port' => '6660',
             'wallet_id' => '2021_12_02_a8be.wlt',
             'password' => 'strength123$'
         ],
         'v2' => [
             'host' => 'localhost',
-            'port' => '6422',
+            'port' => '6660',
             'wallet_id' => '2021_12_02_a8be.wlt',
             'password' => 'strength123$',
-            'payment_addr' => 'subhf1sXSH4zJc4EN9PTHLB4cPmcqYTJga'
+            'payment_address' => 'subhf1sXSH4zJc4EN9PTHLB4cPmcqYTJga'
         ],
         'vvv' => [
             'host' => 'localhost',
@@ -35,6 +35,6 @@ return [
         'database' => 'localbase'
     ],
     'exchange' => [
-        'ratio' => 200000
+        'ratio' => 10000
     ]
 ];
