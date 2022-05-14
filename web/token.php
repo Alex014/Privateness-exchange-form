@@ -8,7 +8,9 @@ use lib\DB;
 $config = require '../config/config.php';
 $db = new DB($config['db']['host'], $config['db']['database'], $config['db']['user'], $config['db']['password']);
 
-var_dump($_GET);
+if (empty($_GET['address'])) {
+    die('Empty address');
+}
 ?>
 
 <!doctype html>
@@ -30,12 +32,17 @@ var_dump($_GET);
   <div class="row">
     <div class="col">
 
-    <?php if (isset($_GET['address'])): ?>
 <?php
 $address = $_GET['address'];
 $token = $db->find($address);
-$status = $token['status'];
+// var_dump($token);
 ?>
+
+<?php if (false === $token): ?>
+    <h1>The token with address "<?=htmlentities($_GET['address'])?>" is not found</h1>
+    <button type="button" class="btn btn-light"><a href="/index.php">Go BACK</a></button>
+<?php else: ?>
+
         <h4><?=$token['status']?></h4>
         <pre><code><?=htmlentities($token['content'])?></code></pre>
 
@@ -52,27 +59,33 @@ $status = $token['status'];
             </tr>
         </table>
 
-        <?php if ('CHECKED' === $status): ?>
+        <?php if ('CHECKED' === $token['status']): ?>
+            <div class="alert alert-success" role="alert">
             <p>Your token is checked</p>
-        <?php elseif ('ACTIVATED' === $status): ?>
+            </div>
+        <?php elseif ('ERROR' === $token['status']): ?>
+            <h3>Your token is failed</h3>
+            <div class="alert alert-danger" role="alert">
+                <?=htmlentities($token['error'])?>
+            </div>
+        <?php elseif ('ACTIVATED' === $token['status']): ?>
+            <div class="alert alert-success" role="alert">
             <p>Your token is activated</p>
+            </div>
             <p>Your have <b><?=$token['hours']?></b> HOURS on <b><?=$token['address']?></b> (v1)</p>
             <p>Transmit any ammount (0.000001) 
                 from <b><?=$token['address']?></b> (v2) 
                 to <b><?=$token['gen_address']?></b> (v2) 
-                and you will recieve <?=$hours  / $config['exchange']['ratio']?> NESS on your address <b><?=$token['pay_address']?></b> (v2) </p>
-        <?php elseif ('PAYED' === $status): ?>
+                and you will recieve <?=$token['hours'] / $config['exchange']['ratio']?> NESS on your address <b><?=$token['pay_address']?></b> (v2) </p>
+        <?php elseif ('PAYED' === $token['status']): ?>
+            <div class="alert alert-success" role="alert">
             <p>Your token is payed</p>
-            <p><?=$hours  / $config['exchange']['ratio']?> NESS</p>
+            </div>
+            <p><?=$$token['hours'] / $config['exchange']['ratio']?> NESS</p>
             <p>Check your balance at <b><?=$token['pay_address']?></b> (v2) </p>
         <?php endif; ?>
-    <?php else: ?>
-        <h1>The address is not given !</h1>
-        <h3>    
-            Use <code>token.php?address=your_privateness_token_address</code>
-        </h3>
-    <?php endif; ?>
 
+<?php endif; ?>
     
     </div>
   </div>
@@ -90,5 +103,3 @@ $status = $token['status'];
     -->
   </body>
 </html>
-
-

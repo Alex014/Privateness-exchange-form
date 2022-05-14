@@ -15,6 +15,9 @@
   <div class="container">
   <div class="row">
     <div class="col">
+        <h1>Instructions</h1>
+        <h3>Howto create exchange token</h3>
+
         <p>
             Create NVS record in Emercoin <br>
             key: <b>worm:token:ness_exchange_v1_v2:your_address_address-v1-with-coinhours</b> <br>
@@ -28,6 +31,8 @@
                 </code>
             </pre>
         </p>
+
+        <h1>Find your token</h1>
 
         <form action="/token.php" method="GET">
         <div class="mb-3">
