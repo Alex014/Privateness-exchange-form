@@ -51,20 +51,20 @@ class DB {
         return $st->execute([$hours, $address]);
     }
 
-    public function activate(string $address, string $gen_addr = '')
+    public function activate(string $address, string $gen_addr, float $hours)
     {
         $st = $this->connection->prepare(
-            "UPDATE tokens SET status = 'ACTIVATED', gen_address = ? WHERE address = ?");
+            "UPDATE tokens SET status = 'ACTIVATED', gen_address = ?, `hours` = ? WHERE address = ?");
 
-        return $st->execute([$gen_addr, $address]);
+        return $st->execute([$gen_addr, $hours, $address]);
     }
 
-    public function pay(string $address)
+    public function pay(string $address, float $hours)
     {
         $st = $this->connection->prepare(
-            "UPDATE tokens SET status = 'PAYED' WHERE address = ?");
+            "UPDATE tokens SET status = 'PAYED', `hours` = ? WHERE address = ?");
 
-        return $st->execute([$address]);
+        return $st->execute([$hours, $address]);
     }
 
     public function find(string $address)

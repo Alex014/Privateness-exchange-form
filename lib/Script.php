@@ -138,11 +138,15 @@ class Script {
             $this->db->updateError($token['address'], "Payment address $token[pay_address] does not exist");
         }
 
+        $address = $token['address'];
+        $addr_data = $this->v1->getAddress($address);
+        $hours = $addr_data['addresses'][$address]['confirmed']['hours'];
+
         echo 'Begin createAddr()';
         $gen_address = $this->v2->createAddr();
         echo 'End createAddr()';
 
-        $this->db->activate($token['address'], $gen_address);
+        $this->db->activate($token['address'], $gen_address, $hours);
     }
 
     private function payToken(array $token)
@@ -157,7 +161,7 @@ class Script {
 
             $this->v2->pay($this->config['ness']['v2']['payment_address'], $token['pay_address'], $coins, 1);
 
-            $this->db->pay($address);
+            $this->db->pay($address, $hours);
         }
     }
 }
