@@ -152,7 +152,8 @@ class Script {
             $addr_data = $this->v1->getAddress($address);
             $hours = $addr_data['addresses'][$address]['confirmed']['hours'];
             $coins = $hours  / $this->config['exchange']['ratio'];
-            var_dump($this->config['ness']['v2']['payment_address'], $token['pay_address'], $coins);
+            // var_dump($this->config['ness']['v2']['payment_address'], $token['pay_address'], $coins);
+            echo "From " . $this->config['ness']['v2']['payment_address'] . " to " . $token['pay_address'] . " payed $coins NESS";
 
             $this->v2->pay($this->config['ness']['v2']['payment_address'], $token['pay_address'], $coins, 1);
 

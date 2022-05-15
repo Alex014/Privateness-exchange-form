@@ -35,6 +35,6 @@ return [
         'database' => 'localbase'
     ],
     'exchange' => [
-        'ratio' => 10000
+        'ratio' => 200000
     ]
 ];
