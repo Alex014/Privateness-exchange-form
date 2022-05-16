@@ -39,9 +39,9 @@ class Script {
     public function parseTokens()
     {
         $this->synchronize();
-        echo "synchronize - ok\n";
+        echo "\nsynchronize - ok\n";
         $this->process();
-        echo "process - ok\n";
+        echo "\nprocess - ok\n";
     }
 
     private function selectTokensNVS()
