@@ -21,6 +21,16 @@ class Ness {
     $this->password = $password;
   }
 
+  public function health(): bool|array 
+  {
+    $responce = file_get_contents("http://" . $this->host . ":" . $this->port . "/api/v1/health");
+    if (false !== $responce) {
+      return json_decode($responce, true);
+    } else {
+      return false;
+    }
+  }
+
   public function createAddr(): string 
   {
     $responce = file_get_contents("http://" . $this->host . ":" . $this->port . "/api/v1/csrf");

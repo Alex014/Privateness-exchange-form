@@ -81,7 +81,7 @@ class DB {
     
     public function findAll()
     {
-        $st = $this->connection->query("SELECT * FROM tokens", \PDO::FETCH_ASSOC);
+        $st = $this->connection->query("SELECT * FROM tokens ORDER BY ID DESC", \PDO::FETCH_ASSOC);
         return $st->fetchAll();
     }
 }
