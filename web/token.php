@@ -81,7 +81,8 @@ $token = $db->find($address);
             <div class="alert alert-success" role="alert">
             <p>Your token is payed</p>
             </div>
-            <p><?=$token['hours'] / $config['exchange']['ratio']?> NESS</p>
+            <p>Your had <b><?=$token['hours']?></b> HOURS on <b><?=$token['address']?></b> (v1)</p>
+            <p>You have been payed <?=$token['hours'] / $config['exchange']['ratio']?> NESS</p>
             <p>Check your balance at <b><?=$token['pay_address']?></b> (v2) </p>
         <?php endif; ?>
 
