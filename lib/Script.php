@@ -21,7 +21,7 @@ class Script {
     {
         $this->config = require '../config/config.php';
 
-        $ness1 = $this->config['ness']['v2'];
+        $ness1 = $this->config['ness']['v1'];
         $ness2 = $this->config['ness']['v2'];
         $this->db = new DB($this->config['db']['host'], $this->config['db']['database'], $this->config['db']['user'], $this->config['db']['password']);
         
@@ -29,8 +29,8 @@ class Script {
         // $tokens = $db->find('zxc');
         // var_dump($tokens);
 
-        $this->v1 = new Ness($ness1['host'], (int) $ness1['port'], $ness1['wallet_id'], $ness1['password']);
-        $this->v2 = new Ness($ness2['host'], (int) $ness2['port'], $ness2['wallet_id'], $ness2['password']);
+        $this->v1 = new Ness($ness1['host'], (int) $ness1['port'], $ness1['wallet_id'], $ness1['password'], $ness1['prefix']);
+        $this->v2 = new Ness($ness2['host'], (int) $ness2['port'], $ness2['wallet_id'], $ness2['password'], $ness2['prefix']);
         // var_dump($ness->getAddress('subhf1sXSH4zJc4EN9PTHLB4cPmcqYTJga'));
 
         // var_dump($ness->createAddr());

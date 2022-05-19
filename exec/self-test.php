@@ -29,9 +29,9 @@ if ($argc > 1) {
     } elseif ('-v' === $argv[1]) {
         print_r($config);
     } elseif ('-v1' === $argv[1]) {
-        print_r($config['ness']['v1']);
+        print_r($ness1);
     } elseif ('-v2' === $argv[1]) {
-        print_r($config['ness']['v2']);
+        print_r($ness2);
     } elseif ('-info1' === $argv[1]) {
         print_r($v1->health());
     } elseif ('-info2' === $argv[1]) {
