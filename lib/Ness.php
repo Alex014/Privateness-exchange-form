@@ -21,7 +21,7 @@ class Ness {
     $this->password = $password;
   }
 
-  public function health(): bool|array 
+  public function health()
   {
     $responce = file_get_contents("http://" . $this->host . ":" . $this->port . "/api/v1/health");
     if (false !== $responce) {
