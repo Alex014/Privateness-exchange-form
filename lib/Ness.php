@@ -12,18 +12,20 @@ class Ness {
   private $port = 6460;
   private $wallet_id = '';
   private $password = '';
+  private $prefix = '';
 
-  public function __construct(string $host, int $port, string $wallet_id, string $password)
+  public function __construct(string $host, int $port, string $wallet_id, string $password, $prefix = 'http://')
   {
     $this->host = $host;
     $this->port = $port;
     $this->wallet_id = $wallet_id;
     $this->password = $password;
+    $this->prefix = $prefix;
   }
 
   public function health()
   {
-    $responce = file_get_contents("http://" . $this->host . ":" . $this->port . "/api/v1/health");
+    $responce = file_get_contents($this->prefix . $this->host . ":" . $this->port . "/api/v1/health");
     if (false !== $responce) {
       return json_decode($responce, true);
     } else {
@@ -33,7 +35,7 @@ class Ness {
 
   public function createAddr(): string 
   {
-    $responce = file_get_contents("http://" . $this->host . ":" . $this->port . "/api/v1/csrf");
+    $responce = file_get_contents($this->prefix . $this->host . ":" . $this->port . "/api/v1/csrf");
     // var_dump($responce);
 
     if (empty($responce)) {
@@ -49,7 +51,7 @@ class Ness {
       'password' => $this->password
     ];
 
-    $ch = curl_init("http://" . $this->host . ":" . $this->port . "/api/v1/wallet/newAddress");
+    $ch = curl_init($this->prefix . $this->host . ":" . $this->port . "/api/v1/wallet/newAddress");
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_POST, true);
     curl_setopt($ch, CURLOPT_HTTPHEADER, array('X-CSRF-Token: '.$token));
@@ -69,7 +71,7 @@ class Ness {
   public function getAddress(string $addr): array 
   {
     // var_dump($addr);
-    $output = file_get_contents("http://" . $this->host . ":" . $this->port . "/api/v1/balance?addrs=" . $addr);
+    $output = file_get_contents($this->prefix . $this->host . ":" . $this->port . "/api/v1/balance?addrs=" . $addr);
     // var_dump($output);
 
     if (empty($output)) {
@@ -88,7 +90,7 @@ class Ness {
 
   public function checkLastRecieved(string $from_addr, string $to_addr): bool
   {
-    $responce = file_get_contents("http://" . $this->host . ":" . $this->port . "/api/v1/transactions?addrs=" . $to_addr . "&confirmed=1&verbose=1");
+    $responce = file_get_contents($this->prefix . $this->host . ":" . $this->port . "/api/v1/transactions?addrs=" . $to_addr . "&confirmed=1&verbose=1");
     $transactions = json_decode($responce, true);
 
     if (0 === count($transactions)) {
@@ -110,7 +112,7 @@ class Ness {
 
   public function pay(string $from_addr, string $to_addr, float $coins, int $hours) 
   {
-    $responce = file_get_contents("http://" . $this->host . ":" . $this->port . "/api/v1/csrf");
+    $responce = file_get_contents($this->prefix . $this->host . ":" . $this->port . "/api/v1/csrf");
 
     $responce = json_decode($responce, true);
     $token = $responce["csrf_token"];
@@ -133,7 +135,7 @@ class Ness {
     }
 BODY;
 
-    $ch = curl_init("http://" . $this->host . ":" . $this->port . "/api/v1/wallet/transaction");
+    $ch = curl_init($this->prefix . $this->host . ":" . $this->port . "/api/v1/wallet/transaction");
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_POST, true);
     curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json', 'X-CSRF-Token: '.$token));
@@ -162,7 +164,7 @@ BODY;
     // var_dump($output); 
     // die();
 
-    $ch = curl_init("http://" . $this->host . ":" . $this->port . "/api/v1/injectTransaction");
+    $ch = curl_init($this->prefix . $this->host . ":" . $this->port . "/api/v1/injectTransaction");
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_POST, true);
     curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json', 'X-CSRF-Token: '.$token));

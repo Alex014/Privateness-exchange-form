@@ -6,20 +6,16 @@ return [
             'host' => 'localhost',
             'port' => '6660',
             'wallet_id' => '',
-            'password' => ''
+            'password' => '',
+            'prefix' => 'http://'
         ],
         'v2' => [
             'host' => 'localhost',
             'port' => '6660',
             'wallet_id' => '',
             'password' => '',
+            'prefix' => 'http://',
             'payment_address' => ''
-        ],
-        'vvv' => [
-            'host' => 'localhost',
-            'port' => '6660',
-            'wallet_id' => '',
-            'password' => ''
         ]
     ],
     'emercoin' => [
