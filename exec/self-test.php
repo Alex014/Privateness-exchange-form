@@ -62,6 +62,7 @@ if (is_array($db->findAll())) {
 
 try {
     Emercoin::getinfo();
+    Emercoin::name_filter("worm:token:ness_exchange_v1_v2:.+");
 } catch (\Exception $err) {
     echo "\nEmercoin NVS - FAILED (" . $err->getMessage() . ")\n";
 }
