@@ -11,6 +11,10 @@ use lib\Emercoin;
 ini_set('display_errors', true);
 error_reporting(E_ERROR);
 
+if (!file_exists(__DIR__ . '../config/config.php')) {
+    die ('config.php file does not exist');
+}
+
 $config = require '../config/config.php';
 
 $db = new DB($config['db']['host'], $config['db']['database'], $config['db']['user'], $config['db']['password']);
