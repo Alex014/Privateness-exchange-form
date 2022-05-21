@@ -1,10 +1,10 @@
 <?php
 namespace lib;
 
-require '../lib/DB.php';
-require '../lib/Ness.php';
-require '../lib/Emercoin.php';
-require '../lib/Parser.php';
+require __DIR__ . '/../lib/DB.php';
+require __DIR__ . '/../lib/Ness.php';
+require __DIR__ . '/../lib/Emercoin.php';
+require __DIR__ . '/../lib/Parser.php';
 
 use lib\DB;
 use lib\Ness;

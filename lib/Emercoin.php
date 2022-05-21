@@ -1,7 +1,7 @@
 <?php 
 namespace lib;
 
-require 'JsonRpcClient.php';
+require __DIR__ . '/JsonRpcClient.php';
 
 use \lib\JsonRpcClient;
 
