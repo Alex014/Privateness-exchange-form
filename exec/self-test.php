@@ -1,7 +1,7 @@
 <?php
-require '../lib/DB.php';
-require '../lib/Ness.php';
-require '../lib/Emercoin.php';
+require __DIR__ . '/../lib/DB.php';
+require __DIR__ . '/../lib/Ness.php';
+require __DIR__ . '/../lib/Emercoin.php';
 
 use lib\DB;
 use lib\Ness;
@@ -15,7 +15,7 @@ if (!file_exists(__DIR__ . '/../config/config.php')) {
     die ('config.php file does not exist');
 }
 
-$config = require '../config/config.php';
+$config = require __DIR__ . '/../config/config.php';
 
 $ness1 = $config['ness']['v1'];
 $ness2 = $config['ness']['v2'];

@@ -2,7 +2,7 @@
 
 use lib\Script;
 
-require '../lib/Script.php';
+require __DIR__ . '/../lib/Script.php';
 
 
 ini_set('display_errors', true);
