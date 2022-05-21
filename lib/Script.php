@@ -19,7 +19,7 @@ class Script {
 
     public function __construct() 
     {
-        $this->config = require '../config/config.php';
+        $this->config = require __DIR__ . '/../config/config.php';
 
         $ness1 = $this->config['ness']['v1'];
         $ness2 = $this->config['ness']['v2'];
