@@ -124,6 +124,11 @@ class Script {
         return $this->v1->checkAddress($address);
     }
 
+    private function checkPaymentAddress(string $address)
+    {
+        return $this->v2->checkAddress($address);
+    }
+
     private function checkUserPaymentAddress(array $token)
     {
         return $this->v2->checkLastRecieved($token['address'], $token['gen_address']);
@@ -135,7 +140,7 @@ class Script {
             $this->db->updateError($token['address'], $token['pay_address'], "Address $token[address] does not exist");
         }
 
-        if (!$this->checkAddress($token['pay_address'])) {
+        if (!$this->checkPaymentAddress($token['pay_address'])) {
             $this->db->updateError($token['address'], $token['pay_address'], "Payment address $token[pay_address] does not exist");
         }
 
