@@ -11,6 +11,10 @@ $db = new DB($config['db']['host'], $config['db']['database'], $config['db']['us
 if (empty($_GET['address'])) {
     die('Empty address');
 }
+
+if (empty($_GET['pay_address'])) {
+    die('Empty pay_address');
+}
 ?>
 
 <!doctype html>
@@ -34,12 +38,13 @@ if (empty($_GET['address'])) {
 
 <?php
 $address = $_GET['address'];
-$token = $db->find($address);
+$pay_address = $_GET['pay_address'];
+$token = $db->find($address, $pay_address);
 // var_dump($token);
 ?>
 
 <?php if (false === $token): ?>
-    <h1>The token with address "<?=htmlentities($_GET['address'])?>" is not found</h1>
+    <h1>The token with address "<?=htmlentities($_GET['address'])?>" and payment address "<?=htmlentities($_GET['pay_address'])?>" is not found</h1>
     <button type="button" class="btn btn-light"><a href="/index.php">Go BACK</a></button>
 <?php else: ?>
 

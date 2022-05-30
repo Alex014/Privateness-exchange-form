@@ -20,14 +20,14 @@ class DB {
         return $st->execute([$data['address'], $data['pay_address'], $data['content'], $data['status'], $data['error'], $data['crc32']]);
     }
 
-    public function updateError(string $address, string $error)
+    public function updateError(string $address, string $pay_address, string $error)
     {
         $st = $this->connection->prepare(
             "UPDATE tokens SET status = 'ERROR', `error` = ? WHERE address = ?");
         return $st->execute([$error, $address]);
     }
 
-    public function updateStatus(string $address, string $status)
+    public function updateStatus(string $address, string $pay_address, string $status)
     {
         $st = $this->connection->prepare(
             "UPDATE tokens SET status = ? WHERE address = ?");
@@ -35,7 +35,7 @@ class DB {
         return $st->execute([$status, $address]);
     }
 
-    public function update(string $address, array $data)
+    public function update(string $address, string $pay_address, array $data)
     {
         $st = $this->connection->prepare(
             "UPDATE tokens SET content = ?, pay_address = ?, `error` = ?, crc32 = ?, `status` = ? WHERE address = ?");
@@ -43,7 +43,7 @@ class DB {
         return $st->execute([$data['content'], $data['pay_address'], $data['error'], $data['crc32'], $data['status'], $address]);
     }
 
-    public function check(string $address, int $hours = 0)
+    public function check(string $address, string $pay_address, int $hours = 0)
     {
         $st = $this->connection->prepare(
             "UPDATE tokens SET status = 'CHECKED', hours = ? WHERE address = ?");
@@ -51,7 +51,7 @@ class DB {
         return $st->execute([$hours, $address]);
     }
 
-    public function activate(string $address, string $gen_addr, float $hours)
+    public function activate(string $address, string $pay_address, string $gen_addr, float $hours)
     {
         $st = $this->connection->prepare(
             "UPDATE tokens SET status = 'ACTIVATED', gen_address = ?, `hours` = ? WHERE address = ?");
@@ -59,7 +59,7 @@ class DB {
         return $st->execute([$gen_addr, $hours, $address]);
     }
 
-    public function pay(string $address, float $hours)
+    public function pay(string $address, string $pay_address, float $hours)
     {
         $st = $this->connection->prepare(
             "UPDATE tokens SET status = 'PAYED', `hours` = ? WHERE address = ?");
@@ -67,7 +67,7 @@ class DB {
         return $st->execute([$hours, $address]);
     }
 
-    public function find(string $address)
+    public function find(string $address, string $pay_address)
     {
         $st = $this->connection->prepare("SELECT * FROM tokens WHERE address = ?");
         $st->execute([$address]);

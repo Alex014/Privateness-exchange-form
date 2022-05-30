@@ -55,7 +55,8 @@ class Script {
         $tokens = array_map(function ($token) {
             $token['crc32'] = crc32($token['value']);
             $name = explode(':', $token['name']);
-            $token['address'] = $name[count($name) - 1];
+            $token['address'] = $name[count($name) - 2];
+            $token['pay_address'] = $name[count($name) - 1];
             return $token;
         },
         $tokens);
@@ -79,12 +80,12 @@ class Script {
         $tokens_nvs = $this->selectTokensNVS();
 
         foreach ($tokens_nvs as $token) {
-            $element = $this->db->find($token['address']);
+            $element = $this->db->find($token['address'], $token['pay_address']);
 
             if (!empty($element)) {
                 if ('PAYED' !== $element['status'] && 'ACTIVATED' !== $element['status']) {
                     if ($element['crc32'] != $token['crc32']) {
-                        $this->db->update($token['address'], $this->parseToken($token));
+                        $this->db->update($token['address'], $token['pay_address'], $this->parseToken($token));
                     }
                 }
             } else {
@@ -103,7 +104,7 @@ class Script {
 
     private function parseToken(array $token)
     {
-        $result = Parser::parseToken($token['value']);
+        $result = Parser::parseToken($token['value'], $token['address'], $token['pay_address']);
         $result['address'] = $token['address'];
 
         return $result;
@@ -131,11 +132,11 @@ class Script {
     private function activateToken(array $token)
     {
         if (!$this->checkAddress($token['address'])) {
-            $this->db->updateError($token['address'], "Address $token[address] does not exist");
+            $this->db->updateError($token['address'], $token['pay_address'], "Address $token[address] does not exist");
         }
 
         if (!$this->checkAddress($token['pay_address'])) {
-            $this->db->updateError($token['address'], "Payment address $token[pay_address] does not exist");
+            $this->db->updateError($token['address'], $token['pay_address'], "Payment address $token[pay_address] does not exist");
         }
 
         $address = $token['address'];
@@ -146,13 +147,14 @@ class Script {
         $gen_address = $this->v2->createAddr();
         echo 'End createAddr()';
 
-        $this->db->activate($token['address'], $gen_address, $hours);
+        $this->db->activate($token['address'], $token['pay_address'], $gen_address, $hours);
     }
 
     private function payToken(array $token)
     {
         if ($this->checkUserPaymentAddress($token)) {
             $address = $token['address'];
+            $pay_address = $token['pay_address'];
             $addr_data = $this->v1->getAddress($address);
             $hours = $addr_data['addresses'][$address]['confirmed']['hours'];
             $coins = $hours  / $this->config['exchange']['ratio'];
@@ -160,7 +162,7 @@ class Script {
             echo "From " . $this->config['ness']['v2']['payment_address'] . " to " . $token['pay_address'] . " payed $coins NESS";
 
             if ($this->v2->pay($this->config['ness']['v2']['payment_address'], $token['pay_address'], $coins, 1)) {
-                $this->db->pay($address, $hours);
+                $this->db->pay($address, $pay_address , $hours);
             }
         }
     }

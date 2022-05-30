@@ -25,3 +25,9 @@ ALTER TABLE `tokens`
 
 ALTER TABLE `tokens`
   MODIFY `ID` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+ALTER TABLE `tokens` DROP INDEX `address`;
+
+ALTER TABLE `tokens` ADD INDEX(`address`); 
+
+ALTER TABLE `tokens` ADD UNIQUE(`address`, `pay_address`); 

@@ -3,7 +3,7 @@
 namespace lib;
 
 class Parser {
-    public static function parseToken(string $xml) 
+    public static function parseToken(string $xml, string $header_address, string $header_pay_address)
     {
         $full_content = $xml;
         $xml = preg_replace("/<!--.+?-->/i", '', $xml);
@@ -49,12 +49,29 @@ class Parser {
             ];
         }
 
+        if($address != $header_address) {
+            return [
+                'content' => $full_content,
+                'crc32' => crc32($full_content),
+                'error' => 'Address field must be equal to NVS header address',
+                'status' => 'ERROR'
+            ];
+        }
+
         $pay_address = (string) $xmlObject->token['pay_address'];
         if('' === $pay_address) {
             return [
                 'content' => $full_content,
                 'crc32' => crc32($full_content),
                 'error' => 'No pay_address field',
+                'status' => 'ERROR'
+            ];
+        }
+        if($pay_address != $header_pay_address) {
+            return [
+                'content' => $full_content,
+                'crc32' => crc32($full_content),
+                'error' => 'pay_address field must be equal to NVS header pay_address',
                 'status' => 'ERROR'
             ];
         }

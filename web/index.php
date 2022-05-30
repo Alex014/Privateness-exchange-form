@@ -20,7 +20,7 @@
 
         <p>
             Create NVS record in Emercoin <br>
-            key: <b>worm:token:ness_exchange_v1_v2:your_address_address-v1-with-coinhours</b> <br>
+            key: <b>worm:token:ness_exchange_v1_v2:your_address_address-v1-with-coinhours:your_address_to-recieve-coins-v2"</b> <br>
             value: 
             <pre>
                 <code>
@@ -36,9 +36,14 @@
 
         <form action="/token.php" method="GET">
         <div class="mb-3">
-            <label for="token" class="form-label">Your token address</label>
-            <input type="text" class="form-control" id="token" name="address" placeholder="your_address_address-v1-with-coinhours">
-            <div id="emailHelp" class="form-text">The address in privateness v1 network, where you have coin-hours.</div>
+            <label for="address" class="form-label">Your token address</label>
+            <input type="text" class="form-control" id="address" name="address" placeholder="your_address_address-v1-with-coinhours" required>
+            <div class="form-text">The address in privateness v1 network, where you have coin-hours.</div>
+        </div>
+        <div class="mb-3">
+            <label for="pay_address" class="form-label">Your pay_address payment address</label>
+            <input type="text" class="form-control" id="token" name="pay_address" placeholder="your_address_to-recieve-coins-v2" required>
+            <div class="form-text">The address in privateness v2 network, to recieve coins.</div>
         </div>
 
         <button type="submit" class="btn btn-primary">Find</button>
