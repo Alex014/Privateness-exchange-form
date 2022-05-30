@@ -129,7 +129,7 @@ class Script {
         return $this->v2->checkAddress($address);
     }
 
-    private function checkUserPaymentAddress(array $token)
+    private function checkGeneratedAddress(array $token)
     {
         return $this->v2->checkLastRecieved($token['address'], $token['gen_address']);
     }
@@ -157,7 +157,7 @@ class Script {
 
     private function payToken(array $token)
     {
-        if ($this->checkUserPaymentAddress($token)) {
+        if ($this->checkGeneratedAddress($token)) {
             $address = $token['address'];
             $pay_address = $token['pay_address'];
             $addr_data = $this->v1->getAddress($address);
