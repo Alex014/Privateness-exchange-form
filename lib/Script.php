@@ -39,9 +39,9 @@ class Script {
     public function parseTokens()
     {
         $this->synchronize();
-        echo "\nsynchronize - ok\n";
+        echo "\nsynchronize - OK\n\n";
         $this->process();
-        echo "\nprocess - ok\n";
+        echo "\nprocess - OK\n";
     }
 
     private function selectTokensNVS()
@@ -138,19 +138,26 @@ class Script {
     {
         if (!$this->checkAddress($token['address'])) {
             $this->db->updateError($token['address'], $token['pay_address'], "Address $token[address] does not exist");
+            return false;
         }
 
         if (!$this->checkPaymentAddress($token['pay_address'])) {
             $this->db->updateError($token['address'], $token['pay_address'], "Payment address $token[pay_address] does not exist");
+            return false;
         }
 
         $address = $token['address'];
         $addr_data = $this->v1->getAddress($address);
         $hours = $addr_data['addresses'][$address]['confirmed']['hours'];
 
-        echo 'Begin createAddr()';
+        if (empty($hours)) {
+            $this->db->updateError($token['address'], $token['pay_address'], "Internal error");
+            return false;
+        }
+
+        echo "Token " . $token['address'] . "-" . $token['pay_address'] . " ";
         $gen_address = $this->v2->createAddr();
-        echo 'End createAddr()';
+        echo " ... generated address $gen_address\n";
 
         $this->db->activate($token['address'], $token['pay_address'], $gen_address, $hours);
     }
@@ -164,10 +171,12 @@ class Script {
             $hours = $addr_data['addresses'][$address]['confirmed']['hours'];
             $coins = $hours  / $this->config['exchange']['ratio'];
             // var_dump($this->config['ness']['v2']['payment_address'], $token['pay_address'], $coins);
-            echo "From " . $this->config['ness']['v2']['payment_address'] . " to " . $token['pay_address'] . " payed $coins NESS";
+            echo "From " . $this->config['ness']['v2']['payment_address'] . " to " . $token['pay_address'];
 
             if ($this->v2->pay($this->config['ness']['v2']['payment_address'], $token['pay_address'], $coins, 1)) {
+                sleep(5);
                 $this->db->pay($address, $pay_address , $hours);
+                echo " payed $coins NESS\n";
             }
         }
     }
