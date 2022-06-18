@@ -257,15 +257,15 @@ BODY;
     $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 
     if (200 !== $httpcode) {
-      $msg = explode(' - ', $output, 2);
+      // $msg = explode(' - ', $output, 2);
 
-      if(2 === count($msg)) {
-        $msg = $msg[1];
-      } else {
-        $msg = $msg[0];
-      }
+      // if(2 === count($msg)) {
+      //   $msg = $msg[1];
+      // } else {
+      //   $msg = $msg[0];
+      // }
       
-      throw new \Exception($msg);
+      throw new \Exception($output . " ($httpcode)");
     }
 
     $json_output = json_decode($output, true);
