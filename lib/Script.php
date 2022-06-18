@@ -175,13 +175,16 @@ class Script {
             $addr_data = $this->v1->getAddress($address);
             $hours = $addr_data['addresses'][$address]['confirmed']['hours'];
             $coins = $hours  / $this->config['exchange']['ratio'];
-            // var_dump($this->config['ness']['v2']['payment_address'], $token['pay_address'], $coins);
-            echo "From " . $this->config['ness']['v2']['payment_address'] . " to " . $token['pay_address'];
+            $coins = round($coins * 100) / 100;
+            
+            if ($coins > 0) {
+                echo "From " . $this->config['ness']['v2']['payment_address'] . " to " . $token['pay_address'];
 
-            if ($this->v2->pay($this->config['ness']['v2']['payment_address'], $token['pay_address'], $coins, 1)) {
-                sleep(5);
-                $this->db->pay($address, $pay_address , $hours);
-                echo " payed $coins NESS\n";
+                if ($this->v2->pay($this->config['ness']['v2']['payment_address'], $token['pay_address'], $coins, 1)) {
+                    sleep(5);
+                    $this->db->pay($address, $pay_address , $hours);
+                    echo " payed $coins NESS\n";
+                }
             }
         }
     }
