@@ -36,6 +36,20 @@ if ($argc > 1) {
         print_r($v1->health());
     } elseif ('-info2' === $argv[1]) {
         print_r($v2->health());
+    } elseif ('-wallets' === $argv[1]) {
+        print_r($v2->listWallets());
+    } elseif ('-addresses' === $argv[1]) {
+        if (empty($argv[2])) {
+            echo "Empty wallet name\n";
+            echo "Usage: self-test.php -addresses <wallet-name>\n";
+            exit();
+        } else {
+            $wallet = $argv[2];
+        }
+
+        foreach ($v2->listAddresses($wallet) as $address => $info) {
+            echo $address . " => " . $info['confirmed']['coins'] . " (" . $info['confirmed']['hours'] . ")" . "\n";
+        }
     } elseif ('-emc' === $argv[1]) {
         print_r($config['emercoin']);
     } elseif ('-db' === $argv[1]) {
@@ -90,6 +104,8 @@ self-test.php -v1       show Privateness network V1 CONFIG
 self-test.php -v2       show Privateness network V2 CONFIG
 self-test.php -info1    show Privateness network V1 INFORMATION
 self-test.php -info2    show Privateness network V2 INFORMATION
+self-test.php -wallets  list wallets from v2
+self-test.php -addresses <wallet_id>    list addresses from v2 and wallet_id
 self-test.php -emc      show EMERCOIN config
 self-test.php -db       show database config
 self-test.php -v        show all config
