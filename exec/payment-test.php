@@ -30,5 +30,5 @@ if ($argc >= 5) {
 
     $v2->pay($from, $to, $coins, $hours);
 } else {
-    echo "payment-test.php addr1 addr2 coins hours";
+    echo "payment-test.php addr1 addr2 coins hours\n";
 }
