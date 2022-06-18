@@ -17,23 +17,18 @@ class Script {
     private $db;
     private $config;
 
+    public $pregenerated_addresses_strategy = true;
+
     public function __construct() 
     {
         $this->config = require __DIR__ . '/../config/config.php';
 
         $ness1 = $this->config['ness']['v1'];
         $ness2 = $this->config['ness']['v2'];
+
         $this->db = new DB($this->config['db']['host'], $this->config['db']['database'], $this->config['db']['user'], $this->config['db']['password']);
-        
-        // var_dump($tokens);
-        // $tokens = $db->find('zxc');
-        // var_dump($tokens);
-
-        $this->v1 = new Ness($ness1['host'], (int) $ness1['port'], $ness1['wallet_id'], $ness1['password'], $ness1['prefix']);
-        $this->v2 = new Ness($ness2['host'], (int) $ness2['port'], $ness2['wallet_id'], $ness2['password'], $ness2['prefix']);
-        // var_dump($ness->getAddress('subhf1sXSH4zJc4EN9PTHLB4cPmcqYTJga'));
-
-        // var_dump($ness->createAddr());
+        $this->v1 = new Ness($ness1['host'], (int) $ness1['port'], $ness1['wallets'], $ness1['main_wallet_id'], $ness1['prefix']);
+        $this->v2 = new Ness($ness2['host'], (int) $ness2['port'], $ness2['wallets'], $ness2['main_wallet_id'], $ness2['prefix']);
     }
 
     public function parseTokens()
@@ -131,7 +126,11 @@ class Script {
 
     private function checkGeneratedAddress(array $token)
     {
-        return $this->v2->checkLastRecieved($token['address'], $token['gen_address']);
+        if ($this->pregenerated_addresses_strategy) {
+            return $this->v2->checkAllRecieved($token['address'], $token['gen_address']);
+        } else {
+            return $this->v2->checkLastRecieved($token['address'], $token['gen_address']);
+        }
     }
 
     private function activateToken(array $token)
@@ -156,7 +155,13 @@ class Script {
         }
 
         echo "Token " . $token['address'] . "-" . $token['pay_address'] . " ";
-        $gen_address = $this->v2->createAddr();
+
+        if ($this->pregenerated_addresses_strategy) {
+            $gen_address = $this->v2->findEmptyAddress();
+        } else {
+            $gen_address = $this->v2->createAddr();
+        }
+
         echo " ... generated address $gen_address\n";
 
         $this->db->activate($token['address'], $token['pay_address'], $gen_address, $hours);

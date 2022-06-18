@@ -20,8 +20,8 @@ $config = require __DIR__ . '/../config/config.php';
 $ness1 = $config['ness']['v1'];
 $ness2 = $config['ness']['v2'];
 
-$v1 = new Ness($ness1['host'], (int) $ness1['port'], $ness1['wallet_id'], $ness1['password'], $ness1['prefix']);
-$v2 = new Ness($ness2['host'], (int) $ness2['port'], $ness2['wallet_id'], $ness2['password'], $ness2['prefix']);
+$v1 = new Ness($ness1['host'], (int) $ness1['port'], $ness1['wallets'], $ness1['main_wallet_id'], $ness1['prefix']);
+$v2 = new Ness($ness2['host'], (int) $ness2['port'], $ness2['wallets'], $ness2['main_wallet_id'], $ness2['prefix']);
 
 if ($argc > 1) {
     if ('-a' === $argv[1]) {
