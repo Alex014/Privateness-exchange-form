@@ -264,7 +264,7 @@ BODY;
       } else {
         $msg = $msg[0];
       }
-      var_dump($coins, $hours);
+      
       throw new \Exception($msg);
     }
 
