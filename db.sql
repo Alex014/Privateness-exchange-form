@@ -32,4 +32,4 @@ ALTER TABLE `tokens` ADD INDEX(`address`);
 
 ALTER TABLE `tokens` ADD UNIQUE(`address`, `pay_address`); 
 
-ALTER TABLE `localbase`.`tokens` DROP INDEX `gen_address`, ADD INDEX `gen_address` (`gen_address`) USING BTREE; 
+ALTER TABLE `tokens` DROP INDEX `gen_address`, ADD INDEX `gen_address` (`gen_address`) USING BTREE; 
