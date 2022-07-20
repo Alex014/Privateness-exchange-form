@@ -69,8 +69,8 @@ class DB {
 
     public function find(string $address, string $pay_address)
     {
-        $st = $this->connection->prepare("SELECT * FROM tokens WHERE address = ?");
-        $st->execute([$address]);
+        $st = $this->connection->prepare("SELECT * FROM tokens WHERE address = ? AND pay_address = ?");
+        $st->execute([$address, $pay_address]);
         $rows = $st->fetchAll();
         if ($st->rowCount() >= 1) {
             return $rows[0];
