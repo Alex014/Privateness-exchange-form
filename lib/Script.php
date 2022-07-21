@@ -61,13 +61,7 @@ class Script {
 
     private function selectTokensDB()
     {
-        $result = [];
-        $tokens = $this->db->findAll();
-        foreach ($tokens as $token) {
-            $result[$token['address']] = $token;
-        }
-
-        return $result;
+        return $this->db->findAll();
     }
 
     private function synchronize()
@@ -92,6 +86,7 @@ class Script {
     private function process()
     {
         $tokens_db = $this->selectTokensDB();
+
         foreach ($tokens_db as $token) {
             $this->processToken($token);
         }
