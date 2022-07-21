@@ -45,7 +45,7 @@ class Script {
         Emercoin::$port = $this->config['emercoin']['port'];
         Emercoin::$username = $this->config['emercoin']['user'];
         Emercoin::$password = $this->config['emercoin']['password'];
-        $tokens = Emercoin::name_filter("worm:token:ness_exchange_v1_v2:.+");
+        $tokens = Emercoin::name_filter("worm:token:ness_exchange_v1_v2:.+?:.+");
 
         $tokens = array_map(function ($token) {
             $token['crc32'] = crc32($token['value']);
@@ -101,6 +101,7 @@ class Script {
     {
         $result = Parser::parseToken($token['value'], $token['address'], $token['pay_address']);
         $result['address'] = $token['address'];
+        $result['pay_address'] = $token['pay_address'];
 
         return $result;
     }
