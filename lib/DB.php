@@ -78,6 +78,30 @@ class DB {
             return false;
         }
     }
+
+    public function findAddress(string $address)
+    {
+        $st = $this->connection->prepare("SELECT * FROM tokens WHERE address = ? AND `status` <> 'ERROR'");
+        $st->execute([$address]);
+        $rows = $st->fetchAll();
+        if ($st->rowCount() >= 1) {
+            return $rows[0];
+        } else {
+            return false;
+        }
+    }
+
+    public function findAddressActivatedPayed(string $ExcludeID, string $address)
+    {
+        $st = $this->connection->prepare("SELECT * FROM tokens WHERE ID <> ? AND address = ? AND `status` IN ('PAYED', 'ACTIVATED')");
+        $st->execute([$ExcludeID, $address]);
+        $rows = $st->fetchAll();
+        if ($st->rowCount() >= 1) {
+            return $rows[0];
+        } else {
+            return false;
+        }
+    }
     
     public function findAll()
     {
