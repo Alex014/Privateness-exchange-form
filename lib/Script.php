@@ -174,7 +174,8 @@ class Script {
             $coins = round($coins * 100) / 100;
             
             if ($coins > 0) {
-                echo "From " . $this->config['ness']['v2']['payment_address'] . " to " . $token['pay_address'];
+                echo "From " . $this->config['ness']['v2']['payment_address'] . " to " . $token['pay_address']
+                 . " ($token[status]) " . "\n";
 
                 try {
                     if ($this->v2->pay($this->config['ness']['v2']['payment_address'], $token['pay_address'], $coins, 1)) {
@@ -184,6 +185,9 @@ class Script {
                     }
                 } catch (\Throwable $e) {
                     $msg = $e->getMessage();
+
+                    echo " <<< $e >>> \n";
+
                     if (false !== strpos($msg, 'balance is not sufficient')) {
                         $this->db->updateStatus($token['address'], $token['pay_address'], 'NOFUNDS');
                     }
