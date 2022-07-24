@@ -105,7 +105,7 @@ class Script {
     {
         if ('CHECKED' === $token['status']) {
             $this->activateToken($token);
-        } elseif ('ACTIVATED' === $token['status']) {
+        } elseif (('ACTIVATED' === $token['status']) || ('NOFUNDS' === $token['status'])) {
             $this->payToken($token);
         }
     }
@@ -176,10 +176,17 @@ class Script {
             if ($coins > 0) {
                 echo "From " . $this->config['ness']['v2']['payment_address'] . " to " . $token['pay_address'];
 
-                if ($this->v2->pay($this->config['ness']['v2']['payment_address'], $token['pay_address'], $coins, 1)) {
-                    sleep(5);
-                    $this->db->pay($address, $pay_address , $hours);
-                    echo " payed $coins NESS\n";
+                try {
+                    if ($this->v2->pay($this->config['ness']['v2']['payment_address'], $token['pay_address'], $coins, 1)) {
+                        sleep(5);
+                        $this->db->pay($address, $pay_address , $hours);
+                        echo " payed $coins NESS\n";
+                    }
+                } catch (\Throwable $e) {
+                    $msg = $e->getMessage();
+                    if (false !== strpos($msg, 'balance is not sufficient')) {
+                        $this->db->updateStatus($token['address'], $token['pay_address'], 'NOFUNDS');
+                    }
                 }
             }
         }

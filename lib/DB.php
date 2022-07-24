@@ -23,16 +23,16 @@ class DB {
     public function updateError(string $address, string $pay_address, string $error)
     {
         $st = $this->connection->prepare(
-            "UPDATE tokens SET status = 'ERROR', `error` = ? WHERE address = ?");
-        return $st->execute([$error, $address]);
+            "UPDATE tokens SET status = 'ERROR', `error` = ? WHERE address = ? AND pay_address = ?");
+        return $st->execute([$error, $address, $pay_address]);
     }
 
     public function updateStatus(string $address, string $pay_address, string $status)
     {
         $st = $this->connection->prepare(
-            "UPDATE tokens SET status = ? WHERE address = ?");
+            "UPDATE tokens SET status = ? WHERE address = ? AND pay_address = ?");
 
-        return $st->execute([$status, $address]);
+        return $st->execute([$status, $address, $pay_address]);
     }
 
     public function update(string $address, string $pay_address, array $data)
