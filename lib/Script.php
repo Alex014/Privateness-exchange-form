@@ -185,7 +185,7 @@ class Script {
                     }
                 } catch (\Throwable $e) {
                     $msg = $e->getMessage();
-
+                    $msg = substr($msg, strpos($msg, ' in /'));
                     echo " ERR: <<< $e >>> \n";
 
                     if (false !== strpos($msg, 'balance is not sufficient')) {
