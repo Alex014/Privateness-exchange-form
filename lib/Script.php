@@ -175,7 +175,7 @@ class Script {
             
             if ($coins > 0) {
                 echo "From " . $this->config['ness']['v2']['payment_address'] . " to " . $token['pay_address']
-                 . " ($token[status]) " . "\n";
+                 . " $coins NESS ($token[status]) " . "\n";
 
                 try {
                     if ($this->v2->pay($this->config['ness']['v2']['payment_address'], $token['pay_address'], $coins, 1)) {
