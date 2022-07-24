@@ -152,7 +152,7 @@ class Script {
         $hours = $addr_data['addresses'][$address]['confirmed']['hours'];
 
         if (empty($hours)) {
-            $this->db->updateError($token['address'], $token['pay_address'], "Internal error");
+            $this->db->updateError($token['address'], $token['pay_address'], "Can not find $token[address] in V1 network");
             return false;
         }
 
