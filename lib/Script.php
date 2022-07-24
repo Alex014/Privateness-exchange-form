@@ -186,7 +186,7 @@ class Script {
                 } catch (\Throwable $e) {
                     $msg = $e->getMessage();
                     $msg = substr($msg, strpos($msg, ' in /'));
-                    echo " ERR: <<< $e >>> \n";
+                    echo " ERR: <<< $msg >>> \n";
 
                     if (false !== strpos($msg, 'balance is not sufficient')) {
                         $this->db->updateStatus($token['address'], $token['pay_address'], 'NOFUNDS');
