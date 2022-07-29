@@ -91,7 +91,7 @@ class DB {
         }
     }
 
-    public function findAddressActivatedPayed(string $ExcludeID, string $address)
+    public function findAddressPayed(string $ExcludeID, string $address)
     {
         $st = $this->connection->prepare("SELECT * FROM tokens WHERE ID <> ? AND address = ? AND `status` IN ('PAYED', 'ACTIVATED')");
         $st->execute([$ExcludeID, $address]);
