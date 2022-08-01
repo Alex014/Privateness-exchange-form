@@ -131,11 +131,11 @@ class Script {
 
     private function activateToken(array $token)
     {
-        if ($this->db->findAddressPayed($token['ID'], $token['address'])) {
-            $this->db->updateError($token['address'], $token['pay_address'], 
-                "Token with address $token[address] already exist\n and is PAYED");
-            return false;
-        }
+        // if ($this->db->findAddressPayed($token['ID'], $token['address'])) {
+        //     $this->db->updateError($token['address'], $token['pay_address'], 
+        //         "Token with address $token[address] already exist\n and is PAYED");
+        //     return false;
+        // }
 
         if (!$this->checkAddress($token['address'])) {
             $this->db->updateError($token['address'], $token['pay_address'], "Address $token[address] does not exist");
